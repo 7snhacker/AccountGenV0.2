@@ -1,10 +1,12 @@
-
+import json
+from json import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 import string
 import random
 import tkinter
 from tkinter import messagebox
 import requests
+from user_agent import generate_user_agent
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -52,7 +54,7 @@ class Ui_Form(object):
         def click():
             letters = string.ascii_lowercase
             li = 0
-            self.textEdit.setText(( ''.join(random.choice(letters) for i in range(6))))
+            self.textEdit.setText(( ''.join(random.choice(letters) for i in range(8))))
             self.textEdit_2.setText(( ''.join(random.choice(letters) for i in range(13))+"@gmail.com"))
             self.textEdit_3.setText("qwertqwert123")
 
@@ -68,11 +70,10 @@ class Ui_Form(object):
             text2 = self.textEdit_2.toPlainText()
             text3 = self.textEdit_3.toPlainText()
             #print(text,"\n",text2,"\n",text3)
-            req = requests.session()
             regurl = "https://www.instagram.com/accounts/web_create_ajax/"
             date = {
             'email': text2,
-            'enc_password': '#PWD_INSTAGRAM_BROWSER:10:1621344504:AVtQAGmkzJY0ha1U6MkAiqUQssXr8fJrheMTW1hTV56nB2tjJiiSDwWPCuuWmeATNzLMeppiRcfIF56/+7NEBJSfCSKXaFJNve28BJzqGOhEVYEio1/DiLJMu0LvCDbnlZ6vuyNtHbOvwhSy1rDvlaA=',
+            'enc_password': '#PWD_INSTAGRAM_BROWSER:0:&:qwertqwert123',
             'username': text,
             'first_name': 'AccountReg V0.1',
             'month': '6',
@@ -84,36 +85,30 @@ class Ui_Form(object):
             'force_sign_up_code': 'vKOxrL5D'
             }
             head = {
-            'accept': '*/*',
-            'accept-encoding': 'gzip, deflate, br',
-            'accept-language': 'en-US,en;q=0.9',
-            'content-length': '414',
-            'content-type': 'application/x-www-form-urlencoded',
-            'cookie': 'mid=YKO7zAALAAEHgitI_xa4QMENkQfn; ig_did=35F95A20-29A3-4CD2-AD0D-812A441D41E9; rur=ATN; csrftoken=2n4Gx2gnM3qEvgWLNbn081kTeJ8QcR8a',
-            'origin': 'https://www.instagram.com',
-            'referer': 'https://www.instagram.com/accounts/emailsignup/',
-            'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-fetch-dest': 'empty',
-            'sec-fetch-mode': 'cors',
-            'sec-fetch-site': 'same-origin',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-            'x-csrftoken': '2n4Gx2gnM3qEvgWLNbn081kTeJ8QcR8a',
-            'x-ig-app-id': '936619743392459',
-            'x-ig-www-claim': 'hmac.AR1fWWo_WkquMJpc1RJadwoyEE0QN4pW0TlXVHboDswSA3Oz',
-            'x-instagram-ajax': '89ff327f9ee3',
-            'x-requested-with': 'XMLHttpRequest'
+            'accept': "*/*",
+            'accept-encoding': "gzip, deflate, br",
+            'accept-language': "es-ES,es;q=0.9,en;q=0.8",
+            'content-length': "241",
+            'origin': "https://www.instagram.com",
+            'referer': "https://www.instagram.com/",
+            'user-agent': f"{generate_user_agent()}",
+            'x-csrftoken': "95RsiHDyX9J6AcVz9jtCIySbwf75QhvG",
+            'x-instagram-ajax': "c7e210fa2eb7",
+            'x-requested-with': "XMLHttpRequest",
+            'Cache-Control': "no-cache"
             }
-            regda = req.post(regurl,data=date,headers=head).text
-            if ('"message": "checkpoint required"') in regda:
+            response = requests.request("POST", regurl, data=date, headers=head)
+            if ('"message": "checkpoint required"') in response:
+                print(response.text)
                 root = tkinter.Tk()
                 root.withdraw()
                 messagebox.showinfo("7snhacker",f"Done Registry \nusername:{text}\nemail:{text2}\npassword:{text3}")
             else:
-                print(regda)
+                print(response.text)
                 root = tkinter.Tk()
                 root.withdraw()
                 messagebox.showinfo("7snhacker", f"Registry Failed \nusername:{text}\nemail:{text2}\npassword:{text3}")
+
 
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setEnabled(True)
